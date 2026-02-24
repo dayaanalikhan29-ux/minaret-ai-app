@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minaret - Prayer Times</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sacred Spiritual Background -->
+    <div class="spiritual-bg">
+        <div class="spiritual-pattern"></div>
+        <div class="spiritual-stars"></div>
+        <div class="spiritual-calligraphy"></div>
+        <div class="sacred-ambient"></div>
+        <div class="sacred-particles">
+            <div class="sacred-particle" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="sacred-particle" style="left: 20%; animation-delay: 3s;"></div>
+            <div class="sacred-particle" style="left: 30%; animation-delay: 6s;"></div>
+            <div class="sacred-particle" style="left: 40%; animation-delay: 9s;"></div>
+            <div class="sacred-particle" style="left: 50%; animation-delay: 12s;"></div>
+            <div class="sacred-particle" style="left: 60%; animation-delay: 15s;"></div>
+            <div class="sacred-particle" style="left: 70%; animation-delay: 18s;"></div>
+            <div class="sacred-particle" style="left: 80%; animation-delay: 21s;"></div>
+            <div class="sacred-particle" style="left: 90%; animation-delay: 24s;"></div>
+        </div>
+    </div>
+    
+    <div class="sacred-container">
+        <!-- Sacred Header -->
+        <header class="sacred-header">
+            <div class="header-sacred-border"></div>
+            <div class="header-content">
+                <div class="location-sacred">
+                    <div class="location-icon">📍</div>
+                    <h1 class="location-title">Lahore, Pakistan</h1>
+                    <div class="sacred-date">
+                        <div id="hijri-date">15 Dhul Hijjah 1445</div>
+                        <div id="gregorian-date">Monday, June 23, 2025</div>
+                    </div>
+                </div>
+                
+                <div class="sacred-countdown">
+                    <div class="countdown-circle">
+                        <div class="countdown-inner">
+                            <div class="countdown-label">Next Prayer</div>
+                            <div class="countdown-prayer" id="next-prayer">Dhuhr</div>
+                            <div class="countdown-time" id="countdown-time">02:45:30</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="sacred-theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sacred Prayer Space -->
+        <main class="sacred-prayer-space">
+            <!-- Location Picker -->
+            <div class="location-picker">
+                <div class="location-picker-container">
+                    <div class="location-picker-header">
+                        <h3 class="location-picker-title">Change Location 🌍</h3>
+                        <div class="current-location" id="current-location">
+                            📍 Lahore (Method: ISNA)
+                        </div>
+                    </div>
+                    <div class="location-picker-form">
+                        <div class="location-input-group">
+                            <input 
+                                type="text" 
+                                id="location-input" 
+                                class="location-input" 
+                                placeholder="e.g. Istanbul, Turkey"
+                                aria-label="Enter city and country"
+                            >
+                            <button 
+                                type="button" 
+                                id="apply-location-btn" 
+                                class="apply-location-btn"
+                                aria-label="Apply location and fetch prayer times"
+                            >
+                                <i class="fas fa-check"></i>
+                                <span class="apply-text">Apply 📍</span>
+                            </button>
+                            <button 
+                                type="button" 
+                                id="location-search-btn" 
+                                class="location-search-btn"
+                                aria-label="Search for prayer times"
+                            >
+                                <i class="fas fa-search"></i>
+                                <span class="search-text">Search</span>
+                            </button>
+                        </div>
+                        
+                        <div class="auto-location-section">
+                            <button 
+                                type="button" 
+                                id="detect-location-btn" 
+                                class="detect-location-btn"
+                                aria-label="Detect my current location"
+                            >
+                                <i class="fas fa-location-arrow"></i>
+                                <span class="detect-text">Detect My Location</span>
+                            </button>
+                            <div class="geo-detected-city" id="geo-detected-city"></div>
+                        </div>
+                        
+                        <div class="calculation-settings">
+                            <div class="method-selector">
+                                <label for="calculation-method" class="method-label">Calculation Method</label>
+                                <select id="calculation-method" class="method-select">
+                                    <option value="1">Karachi</option>
+                                    <option value="2" selected>ISNA</option>
+                                    <option value="3">Muslim World League</option>
+                                    <option value="4">Umm al-Qura Makkah</option>
+                                    <option value="5">Egyptian General Authority</option>
+                                </select>
+                            </div>
+                            
+                            <div class="asr-method-toggle">
+                                <label class="asr-toggle-label">
+                                    <input type="checkbox" id="asr-hanafi" class="asr-toggle-input">
+                                    <span class="asr-toggle-slider"></span>
+                                    <span class="asr-toggle-text">Hanafi Asr Method</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="location-status" id="location-status"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prayer-mats-container">
+                <div class="prayer-mat" data-prayer="fajr">
+                    <div class="mat-sacred-border"></div>
+                    <div class="mat-content">
+                        <div class="prayer-sacred-icon">🌅</div>
+                        <div class="prayer-sacred-info">
+                            <div class="prayer-sacred-name">Fajr</div>
+                            <div class="prayer-sacred-time">04:30 AM</div>
+                            <div class="prayer-sacred-arabic">الفجر</div>
+                        </div>
+                        <button class="sacred-alarm-toggle" data-prayer="fajr" aria-label="Toggle Fajr alarm">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="prayer-mat" data-prayer="dhuhr">
+                    <div class="mat-sacred-border"></div>
+                    <div class="mat-content">
+                        <div class="prayer-sacred-icon">☀️</div>
+                        <div class="prayer-sacred-info">
+                            <div class="prayer-sacred-name">Dhuhr</div>
+                            <div class="prayer-sacred-time">01:15 PM</div>
+                            <div class="prayer-sacred-arabic">الظهر</div>
+                        </div>
+                        <button class="sacred-alarm-toggle" data-prayer="dhuhr" aria-label="Toggle Dhuhr alarm">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="prayer-mat" data-prayer="asr">
+                    <div class="mat-sacred-border"></div>
+                    <div class="mat-content">
+                        <div class="prayer-sacred-icon">🌤️</div>
+                        <div class="prayer-sacred-info">
+                            <div class="prayer-sacred-name">Asr</div>
+                            <div class="prayer-sacred-time">04:45 PM</div>
+                            <div class="prayer-sacred-arabic">العصر</div>
+                        </div>
+                        <button class="sacred-alarm-toggle" data-prayer="asr" aria-label="Toggle Asr alarm">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="prayer-mat" data-prayer="maghrib">
+                    <div class="mat-sacred-border"></div>
+                    <div class="mat-content">
+                        <div class="prayer-sacred-icon">🌅</div>
+                        <div class="prayer-sacred-info">
+                            <div class="prayer-sacred-name">Maghrib</div>
+                            <div class="prayer-sacred-time">07:30 PM</div>
+                            <div class="prayer-sacred-arabic">المغرب</div>
+                        </div>
+                        <button class="sacred-alarm-toggle" data-prayer="maghrib" aria-label="Toggle Maghrib alarm">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="prayer-mat" data-prayer="isha">
+                    <div class="mat-sacred-border"></div>
+                    <div class="mat-content">
+                        <div class="prayer-sacred-icon">🌙</div>
+                        <div class="prayer-sacred-info">
+                            <div class="prayer-sacred-name">Isha</div>
+                            <div class="prayer-sacred-time">09:15 PM</div>
+                            <div class="prayer-sacred-arabic">العشاء</div>
+                        </div>
+                        <button class="sacred-alarm-toggle" data-prayer="isha" aria-label="Toggle Isha alarm">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sacred Actions -->
+        <footer class="sacred-actions">
+            <div class="sacred-actions-container">
+                <button class="sacred-action-btn btn-wudu" id="wudu-btn">
+                    <div class="action-sacred-icon">🧼</div>
+                    <div class="action-sacred-text">
+                        <div class="action-title">Wudu & Niyyah</div>
+                        <div class="action-subtitle">Purification & Intention</div>
+                    </div>
+                    <div class="action-sacred-arrow">→</div>
+                </button>
+
+                <button class="sacred-action-btn btn-salah-guide" id="salah-guide-btn">
+                    <div class="action-sacred-icon">📿</div>
+                    <div class="action-sacred-text">
+                        <div class="action-title">Salah Guide</div>
+                        <div class="action-subtitle">Prayer Breakdown & Rakat</div>
+                    </div>
+                    <div class="action-sacred-arrow">→</div>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Sacred Wudu Modal -->
+    <div class="sacred-modal" id="wudu-modal">
+        <div class="modal-sacred-overlay"></div>
+        <div class="modal-sacred-content">
+            <div class="modal-sacred-header">
+                <h2 class="modal-sacred-title">Wudu & Niyyah Guide</h2>
+                <button class="modal-sacred-close" id="wudu-close" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-sacred-body">
+                <!-- Sacred Intention -->
+                <div class="sacred-intention">
+                    <div class="intention-sacred-icon">💭</div>
+                    <div class="intention-content">
+                        <h3 class="intention-title">Niyyah (Intention)</h3>
+                        <p class="intention-text">"I intend to perform Wudu for the prayer of [Prayer Name] for the sake of Allah"</p>
+                    </div>
+                </div>
+
+                <!-- Sacred Wudu Steps -->
+                <div class="sacred-wudu-guide">
+                    <h3 class="wudu-sacred-title">Wudu Steps</h3>
+                    <div class="wudu-sacred-steps">
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">1</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Wash both hands</div>
+                                <div class="step-arabic">غسل اليدين</div>
+                            </div>
+                        </div>
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">2</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Rinse mouth</div>
+                                <div class="step-arabic">المضمضة</div>
+                            </div>
+                        </div>
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">3</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Sniff water into nose</div>
+                                <div class="step-arabic">الاستنشاق</div>
+                            </div>
+                        </div>
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">4</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Wash face</div>
+                                <div class="step-arabic">غسل الوجه</div>
+                            </div>
+                        </div>
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">5</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Wash arms to elbows</div>
+                                <div class="step-arabic">غسل الذراعين</div>
+                            </div>
+                        </div>
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">6</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Wipe head</div>
+                                <div class="step-arabic">مسح الرأس</div>
+                            </div>
+                        </div>
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">7</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Wipe ears</div>
+                                <div class="step-arabic">مسح الأذنين</div>
+                            </div>
+                        </div>
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">8</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Wash feet to ankles</div>
+                                <div class="step-arabic">غسل الرجلين</div>
+                            </div>
+                        </div>
+                        <div class="wudu-sacred-step">
+                            <div class="step-sacred-number">9</div>
+                            <div class="step-sacred-content">
+                                <div class="step-title">Recite dua</div>
+                                <div class="step-arabic">دعاء الوضوء</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sacred Breaks Wudu -->
+                <div class="sacred-breaks-wudu">
+                    <h3 class="breaks-sacred-title">What Breaks Wudu</h3>
+                    <div class="breaks-sacred-list">
+                        <div class="break-sacred-item">
+                            <div class="break-icon">💧</div>
+                            <div class="break-text">Using the bathroom</div>
+                        </div>
+                        <div class="break-sacred-item">
+                            <div class="break-icon">💨</div>
+                            <div class="break-text">Passing gas</div>
+                        </div>
+                        <div class="break-sacred-item">
+                            <div class="break-icon">🩸</div>
+                            <div class="break-text">Bleeding from wounds</div>
+                        </div>
+                        <div class="break-sacred-item">
+                            <div class="break-icon">😴</div>
+                            <div class="break-text">Deep sleep</div>
+                        </div>
+                        <div class="break-sacred-item">
+                            <div class="break-icon">🤒</div>
+                            <div class="break-text">Loss of consciousness</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sacred Reminder -->
+                <div class="sacred-reminder">
+                    <div class="reminder-sacred-icon">✨</div>
+                    <div class="reminder-content">
+                        <h3 class="reminder-title">Important Reminder</h3>
+                        <p class="reminder-text">Always ensure you are in a state of Wudu before performing Salah. If you're unsure about your Wudu, it's better to renew it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sacred Salah Guide Modal -->
+    <div class="sacred-modal" id="salah-guide-modal">
+        <div class="modal-sacred-overlay"></div>
+        <div class="modal-sacred-content">
+            <div class="modal-sacred-header">
+                <h2 class="modal-sacred-title">Salah Guide</h2>
+                <button class="modal-sacred-close" id="salah-guide-close" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-sacred-body">
+                <!-- Comprehensive Salah Guide -->
+                <div class="salah-section">
+                    <h3 class="salah-section-title">📖 Complete Salah Guide (2 Rakat)</h3>
+                    <div class="salah-guide-steps">
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🕋</div>
+                                <h4 class="step-title">Niyyah (Intention)</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">No need to say it out loud. Make intention in your heart for the specific Salah (e.g., "I am praying 2 rakats Fajr for the sake of Allah").</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">👐</div>
+                                <h4 class="step-title">Takbir al-Ihram</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Raise both hands up to ears (men) / shoulders (women). Say: "Allahu Akbar".</p>
+                                <div class="step-arabic">الله أكبر</div>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🤲</div>
+                                <h4 class="step-title">Opening Supplication (Optional Sunnah)</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">"Subhanak-Allahumma wa bihamdika wa tabaarakasmuka wa ta'ala jadduka wa la ilaaha ghayruk."</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">📖</div>
+                                <h4 class="step-title">Recite Surah Al-Fatiha</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">"Bismillah-ir-Rahman-ir-Raheem..." Then say: Ameen.</p>
+                                <div class="step-arabic">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">📖</div>
+                                <h4 class="step-title">Recite Another Surah</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Example: Surah Ikhlas, Surah Kausar, etc.</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🙇</div>
+                                <h4 class="step-title">Rukoo (Bowing)</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Bow with back straight. Say: "Subhana Rabbiyal Azeem" (3x or more).</p>
+                                <div class="step-arabic">سُبْحَانَ رَبِّيَ الْعَظِيمِ</div>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🧍‍♂️</div>
+                                <h4 class="step-title">Stand Up from Rukoo</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Say: "Sami Allahu liman Hamidah". Then: "Rabbana lakal hamd".</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🤲</div>
+                                <h4 class="step-title">Sujood (Prostration)</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Go into prostration. Say: "Subhana Rabbiyal A'la" (3x or more).</p>
+                                <div class="step-arabic">سُبْحَانَ رَبِّيَ الْأَعْلَى</div>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🪑</div>
+                                <h4 class="step-title">Sit Between Sujood</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Sit and say: "Rabbighfir li, Rabbighfir li".</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🙇‍♂️</div>
+                                <h4 class="step-title">Second Sujood</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Repeat prostration with same tasbih.</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🔁</div>
+                                <h4 class="step-title">Now Stand for Second Rakat</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Repeat steps: Surah Fatiha, Another Surah, Rukoo, Sujood (2x).</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🪑</div>
+                                <h4 class="step-title">Final Tashahhud (Sitting After Second Rakat)</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Recite: "At-tahiyyatu lillahi..." "Allahumma salli 'ala Muhammad..."</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">🫱</div>
+                                <h4 class="step-title">Tasleem (End of Salah)</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Turn your head right: "Assalamu Alaikum wa Rahmatullah". Then left: "Assalamu Alaikum wa Rahmatullah".</p>
+                            </div>
+                        </div>
+
+                        <div class="salah-step-card">
+                            <div class="step-header">
+                                <div class="step-icon">✅</div>
+                                <h4 class="step-title">Salah Complete</h4>
+                            </div>
+                            <div class="step-content">
+                                <p class="step-description">Your 2-rakat Salah is now complete.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Notes -->
+                <div class="salah-section">
+                    <h3 class="salah-section-title">📌 Important Notes</h3>
+                    <div class="salah-notes">
+                        <div class="note-item">
+                            <div class="note-icon">ℹ️</div>
+                            <p class="note-text">If it's a 3 or 4 rakat prayer (e.g. Dhuhr), you stand up after the second rakah and complete the rest silently.</p>
+                        </div>
+                        <div class="note-item">
+                            <div class="note-icon">ℹ️</div>
+                            <p class="note-text">In final sitting (last rakah), you recite full Tashahhud + Salawat + Dua, then tasleem.</p>
+                        </div>
+                        <div class="note-item">
+                            <div class="note-icon">ℹ️</div>
+                            <p class="note-text">This format is for obligatory Salah, not for Eid or Janazah — those have different rules.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Prayers -->
+                <div class="salah-section">
+                    <h3 class="salah-section-title">Daily Prayers</h3>
+                    <div class="salah-prayers-grid">
+                        <div class="salah-prayer-card">
+                            <div class="prayer-header">
+                                <div class="prayer-icon">🌅</div>
+                                <h4 class="prayer-name">Fajr</h4>
+                            </div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type fard">
+                                    <span class="rakat-label">Fard</span>
+                                    <span class="rakat-count">2</span>
+                                </div>
+                                <div class="rakat-type sunnah">
+                                    <span class="rakat-label">Sunnah</span>
+                                    <span class="rakat-count">2</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="salah-prayer-card">
+                            <div class="prayer-header">
+                                <div class="prayer-icon">☀️</div>
+                                <h4 class="prayer-name">Dhuhr</h4>
+                            </div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type fard">
+                                    <span class="rakat-label">Fard</span>
+                                    <span class="rakat-count">4</span>
+                                </div>
+                                <div class="rakat-type sunnah">
+                                    <span class="rakat-label">Sunnah</span>
+                                    <span class="rakat-count">4</span>
+                                </div>
+                                <div class="rakat-type nafl">
+                                    <span class="rakat-label">Nafl</span>
+                                    <span class="rakat-count">2</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="salah-prayer-card">
+                            <div class="prayer-header">
+                                <div class="prayer-icon">🌤️</div>
+                                <h4 class="prayer-name">Asr</h4>
+                            </div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type fard">
+                                    <span class="rakat-label">Fard</span>
+                                    <span class="rakat-count">4</span>
+                                </div>
+                                <div class="rakat-type sunnah">
+                                    <span class="rakat-label">Sunnah</span>
+                                    <span class="rakat-count">4</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="salah-prayer-card">
+                            <div class="prayer-header">
+                                <div class="prayer-icon">🌅</div>
+                                <h4 class="prayer-name">Maghrib</h4>
+                            </div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type fard">
+                                    <span class="rakat-label">Fard</span>
+                                    <span class="rakat-count">3</span>
+                                </div>
+                                <div class="rakat-type sunnah">
+                                    <span class="rakat-label">Sunnah</span>
+                                    <span class="rakat-count">2</span>
+                                </div>
+                                <div class="rakat-type nafl">
+                                    <span class="rakat-label">Nafl</span>
+                                    <span class="rakat-count">2</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="salah-prayer-card">
+                            <div class="prayer-header">
+                                <div class="prayer-icon">🌙</div>
+                                <h4 class="prayer-name">Isha</h4>
+                            </div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type fard">
+                                    <span class="rakat-label">Fard</span>
+                                    <span class="rakat-count">4</span>
+                                </div>
+                                <div class="rakat-type sunnah">
+                                    <span class="rakat-label">Sunnah</span>
+                                    <span class="rakat-count">4</span>
+                                </div>
+                                <div class="rakat-type witr">
+                                    <span class="rakat-label">Witr</span>
+                                    <span class="rakat-count">3</span>
+                                </div>
+                                <div class="rakat-type nafl">
+                                    <span class="rakat-label">Nafl</span>
+                                    <span class="rakat-count">2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Prayers -->
+                <div class="salah-section">
+                    <h3 class="salah-section-title">Special Prayers</h3>
+                    <div class="special-prayers-grid">
+                        <div class="special-prayer-card">
+                            <div class="special-prayer-header">
+                                <div class="special-prayer-icon">🌙</div>
+                                <h4 class="special-prayer-name">Tahajjud</h4>
+                            </div>
+                            <div class="special-prayer-desc">Night prayer performed after Isha and before Fajr. Minimum 2 rakats, can be extended.</div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type nafl">
+                                    <span class="rakat-label">Nafl</span>
+                                    <span class="rakat-count">2+</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="special-prayer-card">
+                            <div class="special-prayer-header">
+                                <div class="special-prayer-icon">🌅</div>
+                                <h4 class="special-prayer-name">Duha</h4>
+                            </div>
+                            <div class="special-prayer-desc">Forenoon prayer performed after sunrise and before Dhuhr. Minimum 2 rakats.</div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type nafl">
+                                    <span class="rakat-label">Nafl</span>
+                                    <span class="rakat-count">2+</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="special-prayer-card">
+                            <div class="special-prayer-header">
+                                <div class="special-prayer-icon">🕌</div>
+                                <h4 class="special-prayer-name">Jumu'ah</h4>
+                            </div>
+                            <div class="special-prayer-desc">Friday congregational prayer that replaces Dhuhr. 2 rakats with khutbah.</div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type fard">
+                                    <span class="rakat-label">Fard</span>
+                                    <span class="rakat-count">2</span>
+                                </div>
+                                <div class="rakat-type sunnah">
+                                    <span class="rakat-label">Sunnah</span>
+                                    <span class="rakat-count">4</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="special-prayer-card">
+                            <div class="special-prayer-header">
+                                <div class="special-prayer-icon">🌙</div>
+                                <h4 class="special-prayer-name">Taraweeh</h4>
+                            </div>
+                            <div class="special-prayer-desc">Ramadan night prayers. 20 rakats total, performed in sets of 2 or 4.</div>
+                            <div class="rakat-breakdown">
+                                <div class="rakat-type sunnah">
+                                    <span class="rakat-label">Sunnah</span>
+                                    <span class="rakat-count">20</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rakat Legend -->
+                <div class="rakat-legend">
+                    <h3 class="legend-title">Rakat Types</h3>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color fard"></div>
+                            <div class="legend-text">Fard (Obligatory)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color sunnah"></div>
+                            <div class="legend-text">Sunnah (Recommended)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color nafl"></div>
+                            <div class="legend-text">Nafl (Voluntary)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color witr"></div>
+                            <div class="legend-text">Witr (Odd-numbered)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

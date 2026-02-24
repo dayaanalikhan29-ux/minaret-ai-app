@@ -1,0 +1,29 @@
+[
+  {
+    "collection": "Sahih Bukhari",
+    "book": 1,
+    "hadithNumber": 1,
+    "arabic": "إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ",
+    "english": "Actions are but by intentions.",
+    "reference": "Sahih Bukhari, Book 1, Hadith 1",
+    "keywords": ["intention", "actions", "niyyah"]
+  },
+  {
+    "collection": "Sahih Bukhari",
+    "book": 2,
+    "hadithNumber": 7,
+    "arabic": "بُنِيَ الإِسْلاَمُ عَلَى خَمْسٍ",
+    "english": "Islam is built upon five [pillars]...",
+    "reference": "Sahih Bukhari, Book 2, Hadith 7",
+    "keywords": ["pillars", "islam", "shahada", "salah", "zakat", "sawm", "hajj"]
+  },
+  {
+    "collection": "Riyad-us-Saliheen",
+    "book": 1,
+    "hadithNumber": 12,
+    "arabic": "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ",
+    "english": "Whoever believes in Allah and the Last Day should speak good or remain silent.",
+    "reference": "Riyad-us-Saliheen, Book 1, Hadith 12",
+    "keywords": ["speech", "good", "silent", "belief"]
+  }
+] 

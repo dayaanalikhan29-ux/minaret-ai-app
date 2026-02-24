@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minaret AI - Your Everyday Islamic Helper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #fdf6e3;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Arabic Calligraphy */
+        .background-calligraphy {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4rem;
+            color: rgba(195, 165, 69, 0.08);
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            z-index: -1;
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.6;
+            text-shadow: 0 0 20px rgba(195, 165, 69, 0.2);
+        }
+
+        /* Fixed Top Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #c3a545 0%, #a67c00 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="islamic" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23islamic)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            letter-spacing: 1px;
+        }
+
+        .main-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 400;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 140px);
+            max-height: 600px;
+            overflow: hidden;
+            border: 1px solid rgba(195, 165, 69, 0.1);
+        }
+
+        /* Chat Messages */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fafafa;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c3a545;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #a67c00;
+        }
+
+        /* Messages */
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .user-message {
+            flex-direction: row-reverse;
+        }
+
+        .bot-message {
+            flex-direction: row;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .user-message .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-right-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .bot-message .message-bubble {
+            background: linear-gradient(135deg, #f8f4e6 0%, #f0e6d2 100%);
+            color: #333;
+            border: 1px solid #e8d5a0;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(195, 165, 69, 0.15);
+        }
+
+        /* Input Bar */
+        .input-bar {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: #333;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #c3a545;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(195, 165, 69, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #c3a545 0%, #a67c00 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(195, 165, 69, 0.3);
+            min-width: 44px;
+            height: 44px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .send-button:hover::before {
+            left: 100%;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(135deg, #a67c00 0%, #8b6914 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(195, 165, 69, 0.4);
+        }
+
+        .send-button:active {
+            transform: translateY(0);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .send-button svg {
+            transition: transform 0.3s ease;
+        }
+
+        .send-button:hover svg {
+            transform: scale(1.1);
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #f8f4e6 0%, #f0e6d2 100%);
+            border-radius: 18px;
+            border-bottom-left-radius: 6px;
+            border: 1px solid #e8d5a0;
+            max-width: 75%;
+            margin-bottom: 16px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: #c3a545;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 15px;
+                margin-top: 90px;
+            }
+            
+            .top-bar {
+                padding: 15px;
+            }
+            
+            .main-title {
+                font-size: 1.8rem;
+            }
+            
+            .main-subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .chat-container {
+                height: calc(100vh - 120px);
+                border-radius: 15px;
+            }
+            
+            .chat-messages {
+                padding: 15px;
+            }
+            
+            .message-bubble {
+                max-width: 85%;
+                padding: 10px 14px;
+            }
+            
+            .input-bar {
+                padding: 15px;
+            }
+            
+            .background-calligraphy {
+                font-size: 3rem;
+                top: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 1.6rem;
+            }
+            
+            .main-subtitle {
+                font-size: 0.75rem;
+            }
+            
+            .message-bubble {
+                max-width: 90%;
+                padding: 8px 12px;
+            }
+            
+            .background-calligraphy {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        .send-button:focus,
+        .input-field:focus {
+            outline: 2px solid #c3a545;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Arabic Calligraphy -->
+    <div class="background-calligraphy">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>
+    
+    <!-- Fixed Top Bar -->
+    <header class="top-bar">
+        <h1 class="main-title">Minaret AI</h1>
+        <p class="main-subtitle">Your Everyday Islamic Helper</p>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chat-box">
+                <!-- Welcome Message -->
+                <div class="message bot-message">
+                    <div class="message-bubble">
+                        <p>Assalamu Alaikum! How can I help you today?</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span>AI is typing...</span>
+            </div>
+            
+            <!-- Input Bar -->
+            <div class="input-bar">
+                <input 
+                    type="text" 
+                    id="user-input" 
+                    class="input-field"
+                    placeholder="Type your message..." 
+                    required
+                >
+                <button type="button" id="send-button" class="send-button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22,2 15,22 11,13 2,9"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Islamic AI Chat Application
+        class MinaretAI {
+            constructor() {
+                this.chatBox = document.getElementById('chat-box');
+                this.userInput = document.getElementById('user-input');
+                this.sendButton = document.getElementById('send-button');
+                this.typingIndicator = document.getElementById('typing-indicator');
+                
+                this.isTyping = false;
+                this.conversationHistory = [];
+                
+                this.init();
+            }
+            
+            init() {
+                this.sendButton.addEventListener('click', () => this.handleSubmit());
+                this.userInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.handleSubmit();
+                    }
+                });
+                
+                // Auto-focus input
+                setTimeout(() => {
+                    this.userInput.focus();
+                }, 500);
+            }
+            
+            async handleSubmit() {
+                const message = this.userInput.value.trim();
+                if (!message || this.isTyping) return;
+                
+                // Add user message
+                this.addMessage(message, 'user');
+                this.userInput.value = '';
+                
+                // Show typing indicator
+                this.showTyping(true);
+                
+                // Generate response
+                setTimeout(() => {
+                    this.showTyping(false);
+                    const response = this.generateResponse(message);
+                    this.addMessage(response, 'bot');
+                }, 1000 + Math.random() * 1500);
+            }
+            
+            addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'message-bubble';
+                
+                if (sender === 'bot') {
+                    // Typewriter effect for bot messages
+                    bubbleDiv.innerHTML = '<p></p>';
+                    messageDiv.appendChild(bubbleDiv);
+                    this.chatBox.appendChild(messageDiv);
+                    
+                    this.typewriterEffect(bubbleDiv.querySelector('p'), text);
+                } else {
+                    bubbleDiv.innerHTML = `<p>${this.escapeHtml(text)}</p>`;
+                    messageDiv.appendChild(bubbleDiv);
+                    this.chatBox.appendChild(messageDiv);
+                }
+                
+                // Store in conversation history
+                this.conversationHistory.push({ sender, text });
+                
+                // Scroll to bottom
+                this.scrollToBottom();
+            }
+            
+            typewriterEffect(element, text, speed = 30) {
+                let i = 0;
+                element.textContent = '';
+                
+                const type = () => {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    }
+                };
+                
+                type();
+            }
+            
+            generateResponse(userMessage) {
+                const lowerMessage = userMessage.toLowerCase();
+                
+                // Greetings and small talk
+                if (this.isGreeting(lowerMessage)) {
+                    return this.getGreetingResponse();
+                }
+                
+                if (this.isGoodbye(lowerMessage)) {
+                    return this.getGoodbyeResponse();
+                }
+                
+                if (this.isThanks(lowerMessage)) {
+                    return this.getThanksResponse();
+                }
+                
+                if (this.isHowAreYou(lowerMessage)) {
+                    return this.getHowAreYouResponse();
+                }
+                
+                // Islamic questions
+                if (this.isIslamicQuestion(lowerMessage)) {
+                    return this.getIslamicResponse(userMessage);
+                }
+                
+                // General conversation
+                return this.getGeneralResponse(userMessage);
+            }
+            
+            isGreeting(message) {
+                const greetings = ['hi', 'hello', 'hey', 'assalamu alaikum', 'salam', 'salaam'];
+                return greetings.some(greeting => message.includes(greeting));
+            }
+            
+            isGoodbye(message) {
+                const goodbyes = ['bye', 'goodbye', 'see you', 'take care', 'wassalam', 'khuda hafiz'];
+                return goodbyes.some(goodbye => message.includes(goodbye));
+            }
+            
+            isThanks(message) {
+                const thanks = ['thanks', 'thank you', 'shukran', 'jazakallah', 'jazakumullah'];
+                return thanks.some(thank => message.includes(thank));
+            }
+            
+            isHowAreYou(message) {
+                const howAreYou = ['how are you', 'how r u', 'how do you do', 'kya haal hai'];
+                return howAreYou.some(phrase => message.includes(phrase));
+            }
+            
+            isIslamicQuestion(message) {
+                const islamicKeywords = [
+                    'bismillah', 'prayer', 'salah', 'namaz', 'quran', 'hadith', 'ramadan', 
+                    'fasting', 'zakat', 'hajj', 'pilgrimage', 'halal', 'haram', 'sunnah',
+                    'sahaba', 'prophet', 'muhammad', 'allah', 'islam', 'muslim', 'mosque',
+                    'adhan', 'azan', 'dua', 'dhikr', 'tawbah', 'istighfar', 'sadaqah'
+                ];
+                return islamicKeywords.some(keyword => message.includes(keyword));
+            }
+            
+            getGreetingResponse() {
+                const responses = [
+                    "Walaikum Assalam! How are you doing today?",
+                    "Assalamu Alaikum! It's nice to meet you. How can I help?",
+                    "Salam! I hope you're having a blessed day. What can I assist you with?",
+                    "Assalamu Alaikum! Welcome. How may I be of service to you?"
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            getGoodbyeResponse() {
+                const responses = [
+                    "Walaikum Assalam! May Allah bless you and keep you safe.",
+                    "Take care! JazakAllah Khair for chatting with me.",
+                    "Khuda Hafiz! May Allah guide you always.",
+                    "Wassalam! Have a wonderful day ahead."
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            getThanksResponse() {
+                const responses = [
+                    "JazakAllah Khair! It's my pleasure to help.",
+                    "You're most welcome! May Allah reward you for your kindness.",
+                    "Afwan! I'm here whenever you need assistance.",
+                    "BarakAllah Feek! It's truly my honor to serve."
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            getHowAreYouResponse() {
+                const responses = [
+                    "Alhamdulillah, I'm doing well! Thank you for asking. How about you?",
+                    "I'm blessed, Alhamdulillah! I hope you're also in good health and spirits.",
+                    "Alhamdulillah, all praise to Allah! I'm here and ready to help. How are you?",
+                    "I'm doing great, Alhamdulillah! Thank you for your concern."
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            getIslamicResponse(userMessage) {
+                const lowerMessage = userMessage.toLowerCase();
+                
+                // Specific Islamic responses
+                if (lowerMessage.includes('bismillah')) {
+                    return "Bismillah (بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ) means 'In the name of Allah, the Most Gracious, the Most Merciful.' It's a beautiful way to begin any important task, reminding us to start everything in Allah's name. The Prophet Muhammad ﷺ taught us to say Bismillah before eating, drinking, entering our homes, and starting any good deed. May Allah bless your intentions!";
+                }
+                
+                if (lowerMessage.includes('prayer') || lowerMessage.includes('salah') || lowerMessage.includes('namaz')) {
+                    return "Salah is one of the five pillars of Islam and is our direct connection with Allah. The Prophet ﷺ said, 'The first thing that will be judged among a person's deeds on the Day of Resurrection is the prayer. If it is sound, then the rest of his deeds will be sound.' Prayer purifies our hearts and brings peace to our souls. May Allah accept all our prayers!";
+                }
+                
+                if (lowerMessage.includes('quran')) {
+                    return "The Quran is Allah's final revelation to Prophet Muhammad ﷺ. It contains guidance for all aspects of life. Allah says: 'This is the Book about which there is no doubt, a guidance for those conscious of Allah.' The Quran is not just for reading, but for understanding, reflecting upon, and implementing in our daily lives. May Allah help us benefit from its wisdom!";
+                }
+                
+                if (lowerMessage.includes('ramadan') || lowerMessage.includes('fasting')) {
+                    return "Ramadan is the blessed month of fasting, the fourth pillar of Islam. The Prophet ﷺ said: 'When Ramadan enters, the gates of Paradise are opened, the gates of Hell are closed, and the devils are chained.' Fasting teaches us self-discipline, empathy for the poor, and brings us closer to Allah. May Allah accept our fasts and grant us the blessings of this holy month!";
+                }
+                
+                if (lowerMessage.includes('zakat') || lowerMessage.includes('charity')) {
+                    return "Zakat is the third pillar of Islam - the obligatory charity that purifies our wealth and helps those in need. Allah says: 'Take from their wealth a charity to purify them and cause them to increase.' The Prophet ﷺ said: 'Charity does not decrease wealth.' Giving in the way of Allah brings countless blessings. May Allah accept our charity and increase our provision!";
+                }
+                
+                // General Islamic response
+                const islamicResponses = [
+                    "That's a wonderful question about Islamic teachings. In Islam, we are taught to...",
+                    "The Prophet Muhammad ﷺ guided us in this matter by saying...",
+                    "Islamic tradition teaches us to approach this with wisdom and compassion...",
+                    "Allah has provided guidance on this in the Quran...",
+                    "The scholars of Islam have discussed this extensively...",
+                    "In the light of Islamic principles, this can be understood as...",
+                    "The Prophet ﷺ showed us through his example that...",
+                    "Islamic teachings emphasize the importance of this...",
+                    "We learn from the Sunnah that this matter should be handled with...",
+                    "The Quran and Hadith guide us in this area by teaching..."
+                ];
+                
+                const baseResponse = islamicResponses[Math.floor(Math.random() * islamicResponses.length)];
+                const wisdom = this.getIslamicWisdom();
+                return baseResponse + " " + wisdom;
+            }
+            
+            getGeneralResponse(userMessage) {
+                const responses = [
+                    "That's an interesting point! I'd be happy to help you with that.",
+                    "Thank you for sharing that with me. How can I assist you further?",
+                    "I appreciate your message. Is there anything specific you'd like to know?",
+                    "That's a good question. Let me help you with that.",
+                    "I understand what you're asking. Here's what I can tell you...",
+                    "Thank you for reaching out. I'm here to help in any way I can.",
+                    "That's a thoughtful question. Let me provide some guidance...",
+                    "I'm glad you asked about that. Here's what I know...",
+                    "That's a great point to discuss. Let me share some thoughts...",
+                    "I appreciate your curiosity. Here's what I can help you with..."
+                ];
+                
+                const baseResponse = responses[Math.floor(Math.random() * responses.length)];
+                const encouragement = this.getEncouragement();
+                return baseResponse + " " + encouragement;
+            }
+            
+            getIslamicWisdom() {
+                const wisdom = [
+                    "Remember, Allah is always watching and He loves those who seek knowledge.",
+                    "The Prophet ﷺ taught us to be patient and kind in all situations.",
+                    "In Islam, we are taught to balance our worldly and spiritual needs.",
+                    "Allah says in the Quran: 'Indeed, Allah is with the patient.'",
+                    "The best of people are those who are most beneficial to others.",
+                    "Seek knowledge from the cradle to the grave, as the Prophet ﷺ advised.",
+                    "In every difficulty, there is ease. Allah does not burden a soul beyond what it can bear.",
+                    "The Prophet ﷺ said: 'The most beloved places to Allah are the mosques.'",
+                    "Remember to always be grateful to Allah for His countless blessings.",
+                    "Islam teaches us to be merciful, just, and compassionate to all creation."
+                ];
+                return wisdom[Math.floor(Math.random() * wisdom.length)];
+            }
+            
+            getEncouragement() {
+                const encouragement = [
+                    "May Allah guide you in your journey!",
+                    "In Sha Allah, you'll find the answers you're looking for.",
+                    "May Allah bless your efforts and intentions!",
+                    "Keep seeking knowledge - it's a noble pursuit.",
+                    "May Allah make it easy for you!",
+                    "Your curiosity is a blessing from Allah.",
+                    "May Allah reward you for your good intentions!",
+                    "In Sha Allah, this will be beneficial for you.",
+                    "May Allah increase you in knowledge and wisdom!",
+                    "Your questions show a beautiful desire to learn."
+                ];
+                return encouragement[Math.floor(Math.random() * encouragement.length)];
+            }
+            
+            showTyping(show) {
+                this.isTyping = show;
+                this.typingIndicator.style.display = show ? 'flex' : 'none';
+                this.sendButton.disabled = show;
+                
+                if (show) {
+                    this.scrollToBottom();
+                }
+            }
+            
+            scrollToBottom() {
+                setTimeout(() => {
+                    this.chatBox.scrollTop = this.chatBox.scrollHeight;
+                }, 100);
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+        
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MinaretAI();
+        });
+    </script>
+</body>
+</html> 
+</body>
+</html> 

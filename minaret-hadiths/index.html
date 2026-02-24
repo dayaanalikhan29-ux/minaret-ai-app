@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Minaret Hadiths</title>
+  <link rel="stylesheet" href="style-new.css?v=20241220-019">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700&family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Lateef:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="animated-background">
+    <div class="mosque-silhouette"></div>
+    <div class="particles"></div>
+  </div>
+
+  <!-- Floating Top Bar -->
+  <div class="floating-top-bar">
+    <div class="top-bar-content">
+      <div class="logo-section">
+        <h1>📜 Minaret Hadiths</h1>
+      </div>
+      
+      <div class="controls-section">
+        <button id="themeToggle" class="theme-toggle" title="Toggle Dark/Light Mode">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome Screen -->
+  <div id="welcomeScreen" class="welcome-screen">
+    <div class="welcome-content">
+      <!-- Close Button -->
+      <button id="closeWelcomeBtn" class="close-welcome-btn" title="Close">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <!-- Spiritual Header -->
+      <div class="spiritual-header">
+        <div class="quote-section">
+          <h2 class="main-quote">"The best of you are those who learn and teach the Hadith."</h2>
+          <p class="arabic-quote">قَدْ جَاءَكُم مِّنَ اللَّـهِ نُورٌ وَكِتَابٌ مُّبِينٌ</p>
+          <p class="verse-reference">— Surah Al-Ma'idah: 15</p>
+        </div>
+        
+        <div class="stats-line">
+          <span class="stats-text">7,193 Sahih Hadiths Available</span>
+          <span class="separator">•</span>
+          <span class="stats-text">Explore by Topic, Source, or Keyword</span>
+        </div>
+      </div>
+      
+      <!-- Surprise Me Section -->
+      <div class="surprise-section">
+        <button id="surpriseMeBtn" class="surprise-btn">
+          <i class="fas fa-gift"></i>
+          <span>Surprise Me with 1 Hadith</span>
+        </button>
+      </div>
+      
+      <!-- Categories Grid -->
+      <div class="categories-container">
+        <h3 class="categories-title">Choose a Topic to Explore</h3>
+        <div class="categories-grid" id="categoriesGrid">
+          <!-- Categories will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-bar-content">
+      <div class="logo">
+        <i class="fas fa-mosque"></i>
+        <span>Minaret Hadiths</span>
+      </div>
+      <div class="top-controls">
+        <button id="themeToggle" class="theme-toggle" title="Toggle Theme">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button id="closeHadithViewer" class="close-hadith-viewer-btn" title="Back to Categories">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hadith Viewer (Hidden by default) -->
+  <div id="hadithViewer" class="hadith-viewer" style="display: none;">
+    <!-- Sticky Filter Bar -->
+    <div class="sticky-filter-bar">
+      <div class="filter-bar-content">
+        <!-- Search Section -->
+        <div class="search-section">
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search hadiths in Arabic or English..." />
+            <button id="clearSearch" class="clear-search" title="Clear search">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Filter Controls Row -->
+        <div class="filter-controls-row">
+          <div class="selected-category">
+            <span id="selectedCategoryDisplay">Selected Category</span>
+          </div>
+          
+          <button id="changeCategoryBtn" class="change-category-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>Select Hadith Categories</span>
+          </button>
+          
+          <select id="sourceFilter" class="filter-select">
+            <option value="all">All Sources</option>
+            <option value="bukhari">Sahih Bukhari</option>
+            <option value="muslim">Sahih Muslim</option>
+          </select>
+          
+          <button id="arabicToggle" class="toggle-switch active" data-state="show" title="Toggle Arabic Text">
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Arabic</span>
+          </button>
+          
+          <button id="bookmarksBtn" class="bookmarks-btn" title="View Bookmarks">
+            <i class="fas fa-heart"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Filters -->
+    <div id="activeFilters" class="active-filters">
+      <!-- Active filter badges will be shown here -->
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="content-wrapper">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+          <span id="hadithCount">Loading...</span>
+        </div>
+        
+        <!-- Hadith Cards Container -->
+        <div id="hadithContainer" class="hadith-cards-container"></div>
+        
+        <!-- Load More Button -->
+        <div id="loadMoreContainer" class="load-more-container">
+          <button id="loadMoreBtn" class="load-more-btn">
+            <i class="fas fa-plus"></i>
+            <span>Load More Hadiths</span>
+          </button>
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="no-results" style="display: none;">
+          <i class="fas fa-search"></i>
+          <h3>No hadiths found</h3>
+          <p>Try adjusting your search terms or filters</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bookmark Modal -->
+  <div id="bookmarkModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-heart"></i> Bookmarked Hadiths</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div id="bookmarkList" class="bookmark-list"></div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div id="shareModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-share"></i> Share Hadith</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="share-content">
+        <div id="shareHadith" class="share-hadith"></div>
+        <div class="share-actions">
+          <button id="copyLink" class="share-btn">
+            <i class="fas fa-link"></i> Copy Link
+          </button>
+          <button id="copyText" class="share-btn">
+            <i class="fas fa-copy"></i> Copy Text
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollToTop" class="scroll-to-top" title="Scroll to Top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <script src="script.js?v=53&t=20241221000058"></script>
+</body>
+</html> 

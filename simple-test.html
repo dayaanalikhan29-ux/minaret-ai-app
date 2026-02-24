@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+</head>
+<body>
+    <h1>Simple Chat Test</h1>
+    <input type="text" id="input" placeholder="Type message">
+    <button onclick="sendMessage()">Send</button>
+    <div id="output"></div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('input');
+            const output = document.getElementById('output');
+            const message = input.value;
+            
+            console.log('Button clicked, message:', message);
+            
+            if (!message) {
+                alert('Please type a message');
+                return;
+            }
+            
+            output.innerHTML += '<p><strong>You:</strong> ' + message + '</p>';
+            input.value = '';
+            
+            // Test the API
+            fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question: message })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                output.innerHTML += '<p><strong>AI:</strong> ' + data.answer + '</p>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                output.innerHTML += '<p><strong>Error:</strong> ' + error.message + '</p>';
+            });
+        }
+        
+        // Also test Enter key
+        document.getElementById('input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                console.log('Enter pressed');
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html> 

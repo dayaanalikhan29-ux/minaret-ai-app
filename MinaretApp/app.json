@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "The Minaret - Quran App",
+    "slug": "minaret-quran-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f5f2ea"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.minaret.quranapp"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#f5f2ea"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.minaret.quranapp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}

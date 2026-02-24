@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Reader</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Quran Reader</h2>
+                <button class="close-sidebar" id="closeSidebar">&times;</button>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search Surahs..." class="search-input">
+                <div id="searchWarning" class="search-warning hidden">No Surah found</div>
+            </div>
+            
+            <div class="surah-list" id="surahList">
+                <!-- Surahs will be populated here -->
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 id="currentSurahTitle">Select a Surah to begin reading</h1>
+            </header>
+            
+            <div class="content-area">
+                <div class="placeholder">
+                    <div class="placeholder-content">
+                        <div class="welcome-section">
+                            <div class="welcome-message">
+                                <h3>Assalamualaikum</h3>
+                                <p>May today bring you closer to Allah</p>
+                            </div>
+                            
+                            <div class="verse-of-day">
+                                <div class="verse-of-day-header">
+                                    <h2>Verse of the Day</h2>
+                                    <div class="verse-of-day-decoration">﷽</div>
+                                </div>
+                                <div class="verse-of-day-content">
+                                    <div class="verse-of-day-arabic">
+                                        إِنَّ اللَّهَ مَعَ الصَّابِرِينَ
+                                    </div>
+                                    <div class="verse-of-day-translation">
+                                        "Indeed, Allah is with the patient."
+                                    </div>
+                                    <div class="verse-of-day-reference">
+                                        Al-Baqarah 2:153
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h2>Select a Surah to Begin Reading</h2>
+                        <p>Choose from the 114 chapters of the Holy Quran to start your spiritual journey. Each Surah contains divine wisdom and guidance for all aspects of life.</p>
+                    </div>
+                </div>
+                
+                <div class="surah-content hidden" id="surahContent">
+                    <div class="surah-header">
+                        <button class="back-button" id="backButton">
+                            <span class="back-icon">←</span>
+                            <span class="back-text">Back to Surahs</span>
+                        </button>
+                    </div>
+
+                    <div class="language-controls" id="languageControls">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="urduToggle" class="toggle-input">
+                            <label for="urduToggle" class="toggle-label">Show Urdu</label>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="transliterationToggle" class="toggle-input">
+                            <label for="transliterationToggle" class="toggle-label">Show Transliteration</label>
+                        </div>
+                    </div>
+
+                    <div class="surah-info" id="surahInfo">
+                        <!-- Surah info will be displayed here -->
+                    </div>
+                    <div class="verses-container" id="versesContainer">
+                        <!-- Verses will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p id="loading-message">Loading...</p>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 
