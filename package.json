@@ -8,7 +8,7 @@
     "dev": "nodemon server.js",
     "test": "jest",
     "lint": "eslint .",
-    "build": "echo 'No build step required for this project'"
+    "build": "cd MinaretApp && npm install && npm run build && rm -rf ../dist && cp -R dist ../dist"
   },
   "keywords": [
     "islamic",

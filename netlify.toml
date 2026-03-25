@@ -1,0 +1,9 @@
+# Expo web static export lives under MinaretApp/dist.
+# Netlify must build from that app folder, not the monorepo root.
+[build]
+  base = "MinaretApp"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
