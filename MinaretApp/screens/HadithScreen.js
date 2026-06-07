@@ -207,13 +207,18 @@ export default function HadithScreen() {
     }
   ];
 
-  // Function to fetch and process hadiths from GitHub
-  const fetchHadithsFromGitHub = async () => {
+  // Function to fetch and process hadiths from CDN
+  const fetchHadithsFromCDN = async () => {
     try {
       setCategoryLoading(true);
-      console.log('🔄 Fetching hadiths from GitHub...');
+      console.log('🔄 Fetching hadiths from CDN...');
       
-      const response = await fetch('https://raw.githubusercontent.com/dayaanalikhan29-ux/minaret-ai-app/performance-fix/MinaretApp/assets/hadiths.json');
+      const response = await fetch('https://cdn.jsdelivr.net/gh/dayaanalikhan29-ux/minaret-ai-app@performance-fix/MinaretApp/assets/hadiths.json', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -338,12 +343,85 @@ export default function HadithScreen() {
       requestAnimationFrame(processChunk);
       
     } catch (error) {
-      console.error('❌ Error fetching hadiths:', error);
-      console.log('🔄 Falling back to sample data...');
-      setHadiths(sampleHadiths);
-      setFilteredHadiths(sampleHadiths);
-      setDataLoaded(true);
-      setCategoryLoading(false);
+      console.error('❌ Error fetching hadiths from CDN:', error);
+      console.log('🔄 Falling back to local file...');
+      
+      // Fallback to local file
+      try {
+        const hadithData = require('../assets/hadiths.json');
+        console.log('📚 Loaded from local file');
+        
+        // Process synchronously for fallback
+        const transformedHadiths = hadithData.map((hadith, index) => ({
+          id: index + 1,
+          title: hadith.reference || `Hadith ${index + 1}`,
+          narrator: hadith.english.split('Narrated ')[1]?.split(':')[0] || 'Unknown',
+          arabic: hadith.arabic,
+          english: hadith.english,
+          category: hadith.categories?.[0] || 'General',
+          source: hadith.source || 'Unknown',
+          reference: hadith.reference || `Hadith ${index + 1}`,
+          grade: 'Sahih',
+          categories: hadith.categories || []
+        }));
+        
+        const categorizedHadiths = transformedHadiths.map(hadith => {
+          const jsonCategories = hadith.categories || [];
+          const appCategories = [];
+          
+          jsonCategories.forEach(jsonCat => {
+            const lowerCat = jsonCat.toLowerCase();
+            if (lowerCat.includes('jannah') || lowerCat.includes('paradise') || lowerCat.includes('heaven') || lowerCat.includes('reward')) {
+              appCategories.push('Jannah');
+            } else if (lowerCat.includes('honest') || lowerCat.includes('truth')) {
+              appCategories.push('Honesty');
+            } else if (lowerCat.includes('prayer') || lowerCat.includes('salah') || lowerCat.includes('worship') || lowerCat.includes('ibadah')) {
+              appCategories.push('Prayer');
+            } else if (lowerCat.includes('knowledge') || lowerCat.includes('learn') || lowerCat.includes('study') || lowerCat.includes('education') || lowerCat.includes('ilm')) {
+              appCategories.push('Knowledge');
+            } else if (lowerCat.includes('charity') || lowerCat.includes('sadaqah') || lowerCat.includes('zakat') || lowerCat.includes('generous') || lowerCat.includes('give')) {
+              appCategories.push('Charity');
+            } else if (lowerCat.includes('family') || lowerCat.includes('marriage') || lowerCat.includes('wife') || lowerCat.includes('husband') || lowerCat.includes('children') || lowerCat.includes('parents')) {
+              appCategories.push('Family');
+            } else if (lowerCat.includes('patience') || lowerCat.includes('sabr') || lowerCat.includes('endure') || lowerCat.includes('persevere')) {
+              appCategories.push('Patience');
+            } else if (lowerCat.includes('forgive') || lowerCat.includes('mercy') || lowerCat.includes('compassion') || lowerCat.includes('pardon') || lowerCat.includes('kindness')) {
+              appCategories.push('Forgiveness');
+            } else if (lowerCat.includes('dua') || lowerCat.includes('supplication') || lowerCat.includes('pray') || lowerCat.includes('ask') || lowerCat.includes('invoke')) {
+              appCategories.push('Dua');
+            } else if (lowerCat.includes('character') || lowerCat.includes('manners') || lowerCat.includes('etiquette') || lowerCat.includes('virtue') || lowerCat.includes('morals') || lowerCat.includes('ethics')) {
+              appCategories.push('Good Character');
+            } else if (lowerCat.includes('repent') || lowerCat.includes('tawbah') || lowerCat.includes('sin') || lowerCat.includes('regret')) {
+              appCategories.push('Repentance');
+            } else if (lowerCat.includes('brother') || lowerCat.includes('unity') || lowerCat.includes('community') || lowerCat.includes('together') || lowerCat.includes('united') || lowerCat.includes('solidarity')) {
+              appCategories.push('Brotherhood');
+            }
+          });
+          
+          if (appCategories.length === 0) {
+            appCategories.push('General');
+          }
+          
+          return {
+            ...hadith,
+            categories: [...new Set(appCategories)]
+          };
+        });
+        
+        setActualHadiths(hadithData);
+        setHadiths(categorizedHadiths);
+        setFilteredHadiths(categorizedHadiths);
+        setDataLoaded(true);
+        setCategoryLoading(false);
+        console.log('✅ Hadiths loaded from local file!');
+      } catch (localError) {
+        console.error('❌ Error loading local file:', localError);
+        console.log('🔄 Falling back to sample data...');
+        setHadiths(sampleHadiths);
+        setFilteredHadiths(sampleHadiths);
+        setDataLoaded(true);
+        setCategoryLoading(false);
+      }
       console.log('🏁 Loading completed');
     }
   };
@@ -376,9 +454,9 @@ export default function HadithScreen() {
     setCurrentView('hadiths');
     setSearchQuery('');
     
-    // Fetch hadiths from GitHub if not already loaded
+    // Fetch hadiths from CDN if not already loaded
     if (!dataLoaded) {
-      await fetchHadithsFromGitHub();
+      await fetchHadithsFromCDN();
     }
   };
 
@@ -389,9 +467,9 @@ export default function HadithScreen() {
   };
 
   const handleSurpriseMe = async () => {
-    // Fetch hadiths from GitHub if not already loaded
+    // Fetch hadiths from CDN if not already loaded
     if (!dataLoaded) {
-      await fetchHadithsFromGitHub();
+      await fetchHadithsFromCDN();
     }
     
     if (hadiths && hadiths.length > 0) {
