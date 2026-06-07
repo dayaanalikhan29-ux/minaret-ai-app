@@ -206,115 +206,149 @@ export default function HadithScreen() {
   ];
 
   useEffect(() => {
-    // Load actual hadith data
+    // Load actual hadith data with async chunked processing
     const loadHadiths = async () => {
       try {
         setLoading(true);
         console.log('🔄 Starting to load hadiths...');
         
-        // Try to load actual hadith data from the JSON file
+        // Load hadith data asynchronously using fetch
         let hadithData;
         try {
-          hadithData = require('../assets/hadiths.json');
+          const response = await fetch(require('../assets/hadiths.json'));
+          hadithData = await response.json();
           console.log('📚 Successfully loaded hadith data:', {
             totalHadiths: hadithData.length,
             sampleHadith: hadithData[0]
           });
-        } catch (requireError) {
-          console.error('❌ Error requiring hadiths.json:', requireError);
-          throw requireError;
+        } catch (fetchError) {
+          console.error('❌ Error fetching hadiths.json:', fetchError);
+          // Fallback to require if fetch fails
+          try {
+            hadithData = require('../assets/hadiths.json');
+            console.log('📚 Fallback: loaded hadith data with require');
+          } catch (requireError) {
+            console.error('❌ Error requiring hadiths.json:', requireError);
+            throw requireError;
+          }
         }
         
-        // Transform the data to match our expected format
-        console.log('🔄 Transforming hadith data...');
-        const transformedHadiths = hadithData.map((hadith, index) => ({
-          id: index + 1,
-          title: hadith.reference || `Hadith ${index + 1}`,
-          narrator: hadith.english.split('Narrated ')[1]?.split(':')[0] || 'Unknown',
-          arabic: hadith.arabic,
-          english: hadith.english,
-          category: hadith.categories?.[0] || 'General',
-          source: hadith.source || 'Unknown',
-          reference: hadith.reference || `Hadith ${index + 1}`,
-          grade: 'Sahih', // Default grade
-          categories: hadith.categories || []
-        }));
+        // Process data in chunks to avoid blocking main thread
+        console.log('🔄 Processing hadith data in chunks...');
+        const CHUNK_SIZE = 500;
+        const totalHadiths = hadithData.length;
+        const transformedHadiths = [];
+        const categorizedHadiths = [];
         
-        console.log('🔄 Mapping JSON categories to app categories...');
-        // Map JSON categories to app category IDs
-        const categorizedHadiths = transformedHadiths.map(hadith => {
-          const jsonCategories = hadith.categories || [];
-          const appCategories = [];
+        let currentIndex = 0;
+        
+        const processChunk = () => {
+          const endIndex = Math.min(currentIndex + CHUNK_SIZE, totalHadiths);
+          const chunk = hadithData.slice(currentIndex, endIndex);
           
-          // Map JSON category strings to app category IDs
-          jsonCategories.forEach(jsonCat => {
-            const lowerCat = jsonCat.toLowerCase();
-            if (lowerCat.includes('jannah') || lowerCat.includes('paradise') || lowerCat.includes('heaven') || lowerCat.includes('reward')) {
-              appCategories.push('Jannah');
-            } else if (lowerCat.includes('honest') || lowerCat.includes('truth')) {
-              appCategories.push('Honesty');
-            } else if (lowerCat.includes('prayer') || lowerCat.includes('salah') || lowerCat.includes('worship') || lowerCat.includes('ibadah')) {
-              appCategories.push('Prayer');
-            } else if (lowerCat.includes('knowledge') || lowerCat.includes('learn') || lowerCat.includes('study') || lowerCat.includes('education') || lowerCat.includes('ilm')) {
-              appCategories.push('Knowledge');
-            } else if (lowerCat.includes('charity') || lowerCat.includes('sadaqah') || lowerCat.includes('zakat') || lowerCat.includes('generous') || lowerCat.includes('give')) {
-              appCategories.push('Charity');
-            } else if (lowerCat.includes('family') || lowerCat.includes('marriage') || lowerCat.includes('wife') || lowerCat.includes('husband') || lowerCat.includes('children') || lowerCat.includes('parents')) {
-              appCategories.push('Family');
-            } else if (lowerCat.includes('patience') || lowerCat.includes('sabr') || lowerCat.includes('endure') || lowerCat.includes('persevere')) {
-              appCategories.push('Patience');
-            } else if (lowerCat.includes('forgive') || lowerCat.includes('mercy') || lowerCat.includes('compassion') || lowerCat.includes('pardon') || lowerCat.includes('kindness')) {
-              appCategories.push('Forgiveness');
-            } else if (lowerCat.includes('dua') || lowerCat.includes('supplication') || lowerCat.includes('pray') || lowerCat.includes('ask') || lowerCat.includes('invoke')) {
-              appCategories.push('Dua');
-            } else if (lowerCat.includes('character') || lowerCat.includes('manners') || lowerCat.includes('etiquette') || lowerCat.includes('virtue') || lowerCat.includes('morals') || lowerCat.includes('ethics')) {
-              appCategories.push('Good Character');
-            } else if (lowerCat.includes('repent') || lowerCat.includes('tawbah') || lowerCat.includes('sin') || lowerCat.includes('regret')) {
-              appCategories.push('Repentance');
-            } else if (lowerCat.includes('brother') || lowerCat.includes('unity') || lowerCat.includes('community') || lowerCat.includes('together') || lowerCat.includes('united') || lowerCat.includes('solidarity')) {
-              appCategories.push('Brotherhood');
+          // Transform chunk
+          const transformedChunk = chunk.map((hadith, index) => ({
+            id: currentIndex + index + 1,
+            title: hadith.reference || `Hadith ${currentIndex + index + 1}`,
+            narrator: hadith.english.split('Narrated ')[1]?.split(':')[0] || 'Unknown',
+            arabic: hadith.arabic,
+            english: hadith.english,
+            category: hadith.categories?.[0] || 'General',
+            source: hadith.source || 'Unknown',
+            reference: hadith.reference || `Hadith ${currentIndex + index + 1}`,
+            grade: 'Sahih',
+            categories: hadith.categories || []
+          }));
+          
+          // Categorize chunk
+          const categorizedChunk = transformedChunk.map(hadith => {
+            const jsonCategories = hadith.categories || [];
+            const appCategories = [];
+            
+            jsonCategories.forEach(jsonCat => {
+              const lowerCat = jsonCat.toLowerCase();
+              if (lowerCat.includes('jannah') || lowerCat.includes('paradise') || lowerCat.includes('heaven') || lowerCat.includes('reward')) {
+                appCategories.push('Jannah');
+              } else if (lowerCat.includes('honest') || lowerCat.includes('truth')) {
+                appCategories.push('Honesty');
+              } else if (lowerCat.includes('prayer') || lowerCat.includes('salah') || lowerCat.includes('worship') || lowerCat.includes('ibadah')) {
+                appCategories.push('Prayer');
+              } else if (lowerCat.includes('knowledge') || lowerCat.includes('learn') || lowerCat.includes('study') || lowerCat.includes('education') || lowerCat.includes('ilm')) {
+                appCategories.push('Knowledge');
+              } else if (lowerCat.includes('charity') || lowerCat.includes('sadaqah') || lowerCat.includes('zakat') || lowerCat.includes('generous') || lowerCat.includes('give')) {
+                appCategories.push('Charity');
+              } else if (lowerCat.includes('family') || lowerCat.includes('marriage') || lowerCat.includes('wife') || lowerCat.includes('husband') || lowerCat.includes('children') || lowerCat.includes('parents')) {
+                appCategories.push('Family');
+              } else if (lowerCat.includes('patience') || lowerCat.includes('sabr') || lowerCat.includes('endure') || lowerCat.includes('persevere')) {
+                appCategories.push('Patience');
+              } else if (lowerCat.includes('forgive') || lowerCat.includes('mercy') || lowerCat.includes('compassion') || lowerCat.includes('pardon') || lowerCat.includes('kindness')) {
+                appCategories.push('Forgiveness');
+              } else if (lowerCat.includes('dua') || lowerCat.includes('supplication') || lowerCat.includes('pray') || lowerCat.includes('ask') || lowerCat.includes('invoke')) {
+                appCategories.push('Dua');
+              } else if (lowerCat.includes('character') || lowerCat.includes('manners') || lowerCat.includes('etiquette') || lowerCat.includes('virtue') || lowerCat.includes('morals') || lowerCat.includes('ethics')) {
+                appCategories.push('Good Character');
+              } else if (lowerCat.includes('repent') || lowerCat.includes('tawbah') || lowerCat.includes('sin') || lowerCat.includes('regret')) {
+                appCategories.push('Repentance');
+              } else if (lowerCat.includes('brother') || lowerCat.includes('unity') || lowerCat.includes('community') || lowerCat.includes('together') || lowerCat.includes('united') || lowerCat.includes('solidarity')) {
+                appCategories.push('Brotherhood');
+              }
+            });
+            
+            if (appCategories.length === 0) {
+              appCategories.push('General');
             }
+            
+            return {
+              ...hadith,
+              categories: [...new Set(appCategories)]
+            };
           });
           
-          // If no categories mapped, add to General
-          if (appCategories.length === 0) {
-            appCategories.push('General');
-          }
+          transformedHadiths.push(...transformedChunk);
+          categorizedHadiths.push(...categorizedChunk);
           
-          return {
-            ...hadith,
-            categories: [...new Set(appCategories)] // Remove duplicates
-          };
-        });
+          currentIndex = endIndex;
+          
+          if (currentIndex < totalHadiths) {
+            // Continue processing in next frame
+            requestAnimationFrame(processChunk);
+          } else {
+            // All chunks processed
+            console.log('✅ All chunks processed');
+            
+            setActualHadiths(hadithData);
+            setHadiths(categorizedHadiths);
+            setFilteredHadiths(categorizedHadiths);
+            
+            // Extract unique categories for filter
+            const allCategories = categorizedHadiths.flatMap(h => h.categories || [h.category]).filter(Boolean);
+            const uniqueCategories = [...new Set(allCategories)];
+            console.log('📂 Available categories:', uniqueCategories.length);
+            console.log('📂 Sample categories:', uniqueCategories.slice(0, 10));
+            
+            // Debug category counts
+            categories.forEach(cat => {
+              const count = categorizedHadiths.filter(h => 
+                h.category === cat.id || 
+                (h.categories && h.categories.some(c => c === cat.id))
+              ).length;
+              console.log(`📊 ${cat.name}: ${count} hadiths`);
+            });
+            
+            console.log('✅ Hadiths loaded successfully!');
+            setLoading(false);
+            console.log('🏁 Loading completed');
+          }
+        };
         
-        setActualHadiths(hadithData);
-        setHadiths(categorizedHadiths);
-        setFilteredHadiths(categorizedHadiths);
-        
-        // Extract unique categories for filter
-        const allCategories = categorizedHadiths.flatMap(h => h.categories || [h.category]).filter(Boolean);
-        const uniqueCategories = [...new Set(allCategories)];
-        console.log('📂 Available categories:', uniqueCategories.length);
-        console.log('📂 Sample categories:', uniqueCategories.slice(0, 10));
-        
-        // Debug category counts
-        categories.forEach(cat => {
-          const count = categorizedHadiths.filter(h => 
-            h.category === cat.id || 
-            (h.categories && h.categories.some(c => c === cat.id))
-          ).length;
-          console.log(`📊 ${cat.name}: ${count} hadiths`);
-        });
-        
-        console.log('✅ Hadiths loaded successfully!');
+        // Start chunked processing
+        requestAnimationFrame(processChunk);
         
       } catch (error) {
         console.error('❌ Error loading hadiths:', error);
         console.log('🔄 Falling back to sample data...');
-        // Fallback to sample data if loading fails
         setHadiths(sampleHadiths);
         setFilteredHadiths(sampleHadiths);
-      } finally {
         setLoading(false);
         console.log('🏁 Loading completed');
       }
