@@ -685,35 +685,6 @@ export default function HadithScreen() {
     );
   }
 
-  // Error fallback - if something goes wrong, show at least the welcome screen
-  if (!hadiths || hadiths.length === 0) {
-    console.log('⚠️ No hadiths loaded, showing fallback');
-    return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? darkStyles.backgroundColor : styles.container.backgroundColor }]}>
-        <View style={[styles.header, { backgroundColor: isDark ? '#0c0c0c' : styles.header.backgroundColor }]}>
-          <Text style={[styles.headerTitle, { color: isDark ? '#d4af37' : styles.headerTitle.color }]}>Hadith</Text>
-        </View>
-        <View style={[styles.content, { backgroundColor: isDark ? darkStyles.backgroundColor : styles.content.backgroundColor }]}>
-          <View style={styles.welcomeContainer}>
-            <View style={styles.spiritualHeader}>
-              <Text style={styles.arabicQuote}>اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ</Text>
-              <Text style={styles.mainQuote}>"O Allah, send prayers upon Muhammad"</Text>
-              <Text style={styles.verseReference}>Hadith Collection</Text>
-            </View>
-            <View style={styles.statsLine}>
-              <Text style={styles.statsText}>14,552 Sahih Hadiths Available</Text>
-              <Text style={styles.separator}>•</Text>
-              <Text style={styles.statsText}>Explore by Topic, Source, or Keyword</Text>
-            </View>
-            <Text style={{ textAlign: 'center', color: isDark ? darkStyles.secondary : '#666', marginBottom: 20 }}>
-              Loading hadith collection...
-            </Text>
-          </View>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? darkStyles.backgroundColor : styles.container.backgroundColor }]}>
       <View style={[styles.header, { backgroundColor: isDark ? '#0c0c0c' : styles.header.backgroundColor }]}>
