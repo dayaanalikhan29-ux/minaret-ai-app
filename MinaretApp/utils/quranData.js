@@ -1,10 +1,12 @@
 // Quran Data Utility
 // Loads and merges Quran data for the React Native app
 
-const quranArEn = require('../data/ar-en.json');
-const quranUr = require('../data/ur.json');
-const quranTransliteration = require('../data/en.transliteration.json');
+// Only load surah info on startup (small file)
 const surahInfo = require('../data/surah.json');
+
+// Cache for loaded surah data
+const surahDataCache = {};
+let processedSurahs = null;
 
 // Helper: create a map for fast lookup
 function createVerseMap(arr, field) {
@@ -30,12 +32,7 @@ function createNestedVerseMap(arr, field) {
   return map;
 }
 
-// Cache for processed data
-let processedSurahs = null;
-let urduMap = null;
-let translitMap = null;
-
-// Main function to get all surahs with merged verse data
+// Main function to get all surahs (without verse data)
 function getAllSurahs() {
   try {
     // Return cached data if available
@@ -44,27 +41,10 @@ function getAllSurahs() {
       return processedSurahs;
     }
 
-    console.log('Loading Quran data...');
+    console.log('Loading surah info...');
     console.log('Surah info length:', surahInfo.length);
-    console.log('Surah info first 5:', surahInfo.slice(0, 5).map(s => s.title));
-    console.log('Surah info last 5:', surahInfo.slice(-5).map(s => s.title));
-    console.log('Arabic-English verses:', quranArEn.length);
-    console.log('Urdu verses:', quranUr.length);
-    console.log('Transliteration verses:', quranTransliteration.length);
 
-    // Create lookup maps for urdu and transliteration (cache these too)
-    if (!urduMap) {
-      urduMap = createNestedVerseMap(quranUr, 'translation');
-      console.log('Urdu map created with', Object.keys(urduMap).length, 'entries');
-      console.log('Sample Urdu entries:', Object.keys(urduMap).slice(0, 3));
-    }
-    if (!translitMap) {
-      translitMap = createNestedVerseMap(quranTransliteration, 'transliteration');
-      console.log('Transliteration map created with', Object.keys(translitMap).length, 'entries');
-      console.log('Sample transliteration entries:', Object.keys(translitMap).slice(0, 3));
-    }
-
-    // Build the final surah array (without verses initially)
+    // Build the surah array (without verses initially)
     const allSurahs = surahInfo.map((surah) => {
       const surahNumber = parseInt(surah.index);
       return {
@@ -92,27 +72,26 @@ function getAllSurahs() {
 // Function to load verses for a specific surah on demand
 function getSurahVerses(surahNumber) {
   try {
-    if (!urduMap) {
-      urduMap = createNestedVerseMap(quranUr, 'translation');
-    }
-    if (!translitMap) {
-      translitMap = createNestedVerseMap(quranTransliteration, 'transliteration');
+    // Check cache first
+    const cacheKey = `surah-${surahNumber.toString().padStart(3, '0')}`;
+    if (surahDataCache[cacheKey]) {
+      console.log(`Returning cached verses for surah ${surahNumber}`);
+      return surahDataCache[cacheKey];
     }
 
-    // Filter verses for this specific surah
-    console.log(`Filtering verses for surah ${surahNumber} from ${quranArEn.length} total verses`);
-    const filteredVerses = quranArEn.filter(v => v.chapter_number === surahNumber);
-    console.log(`Found ${filteredVerses.length} verses for surah ${surahNumber}`);
-    console.log(`Sample filtered verses:`, filteredVerses.slice(0, 3).map(v => ({ chapter: v.chapter_number, ayah: v.Ayah_number })));
-    
-    const surahVerses = filteredVerses.map(v => {
-      const urduText = urduMap[`${surahNumber}:${v.Ayah_number}`] || '';
-      const translitText = translitMap[`${surahNumber}:${v.Ayah_number}`] || '';
-      
-      if (v.Ayah_number <= 3) {
-        console.log(`Verse ${surahNumber}:${v.Ayah_number} - Urdu: ${urduText ? 'YES' : 'NO'}, Transliteration: ${translitText ? 'YES' : 'NO'}`);
-      }
-      
+    // Load from split file
+    const fileName = `surah-${surahNumber.toString().padStart(3, '0')}.json`;
+    const filePath = require.resolve(`../data/quran-surahs/${fileName}`);
+    const surahData = require(filePath);
+
+    console.log(`Loading verses for surah ${surahNumber} from split file`);
+    console.log(`Found ${surahData.arEn.length} verses in ar-en data`);
+
+    // Merge the data
+    const surahVerses = surahData.arEn.map((v, index) => {
+      const urduText = surahData.ur[index]?.translation || '';
+      const translitText = surahData.transliteration[index]?.transliteration || '';
+
       return {
         ayah: v.Ayah_number,
         arabic: normalizeArabicText(v.content_ar),
@@ -121,6 +100,9 @@ function getSurahVerses(surahNumber) {
         transliteration: translitText,
       };
     });
+
+    // Cache the result
+    surahDataCache[cacheKey] = surahVerses;
 
     console.log(`Loaded ${surahVerses.length} verses for surah ${surahNumber}`);
     return surahVerses;
