@@ -209,10 +209,12 @@ function MainTabs() {
 }
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
   useEffect(() => {
     async function loadFonts() {
       try {
-        console.log('Loading fonts in background...');
+        console.log('Loading fonts...');
         await Font.loadAsync({
           'Amiri': require('./assets/fonts/Amiri-Regular.ttf'),
           'NotoNaskhArabic': require('./assets/fonts/NotoNaskhArabic-Regular.ttf'),
@@ -220,14 +222,25 @@ export default function App() {
           'KFGQPCUthmanTahaNaskh': require('./assets/fonts/KFGQPC-Uthman-Taha-Naskh.ttf'),
         });
         console.log('Fonts loaded successfully!');
+        console.log('Available fonts:', await Font.loadAsync({}));
+        setFontsLoaded(true);
       } catch (error) {
         console.error('Error loading fonts:', error);
+        setFontsLoaded(true); // Continue without custom fonts
       }
     }
     loadFonts();
   }, []);
 
   console.log('App MOUNT');
+  
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f2ea' }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <ThemeProvider>
