@@ -240,9 +240,52 @@ export default function HadithScreen() {
           categories: hadith.categories || []
         }));
         
-        console.log('🔄 Categorizing hadiths...');
-        // Categorize the hadiths using the keyword-based categorization
-        const categorizedHadiths = categorizeHadiths(transformedHadiths);
+        console.log('🔄 Mapping JSON categories to app categories...');
+        // Map JSON categories to app category IDs
+        const categorizedHadiths = transformedHadiths.map(hadith => {
+          const jsonCategories = hadith.categories || [];
+          const appCategories = [];
+          
+          // Map JSON category strings to app category IDs
+          jsonCategories.forEach(jsonCat => {
+            const lowerCat = jsonCat.toLowerCase();
+            if (lowerCat.includes('jannah') || lowerCat.includes('paradise') || lowerCat.includes('heaven') || lowerCat.includes('reward')) {
+              appCategories.push('Jannah');
+            } else if (lowerCat.includes('honest') || lowerCat.includes('truth')) {
+              appCategories.push('Honesty');
+            } else if (lowerCat.includes('prayer') || lowerCat.includes('salah') || lowerCat.includes('worship') || lowerCat.includes('ibadah')) {
+              appCategories.push('Prayer');
+            } else if (lowerCat.includes('knowledge') || lowerCat.includes('learn') || lowerCat.includes('study') || lowerCat.includes('education') || lowerCat.includes('ilm')) {
+              appCategories.push('Knowledge');
+            } else if (lowerCat.includes('charity') || lowerCat.includes('sadaqah') || lowerCat.includes('zakat') || lowerCat.includes('generous') || lowerCat.includes('give')) {
+              appCategories.push('Charity');
+            } else if (lowerCat.includes('family') || lowerCat.includes('marriage') || lowerCat.includes('wife') || lowerCat.includes('husband') || lowerCat.includes('children') || lowerCat.includes('parents')) {
+              appCategories.push('Family');
+            } else if (lowerCat.includes('patience') || lowerCat.includes('sabr') || lowerCat.includes('endure') || lowerCat.includes('persevere')) {
+              appCategories.push('Patience');
+            } else if (lowerCat.includes('forgive') || lowerCat.includes('mercy') || lowerCat.includes('compassion') || lowerCat.includes('pardon') || lowerCat.includes('kindness')) {
+              appCategories.push('Forgiveness');
+            } else if (lowerCat.includes('dua') || lowerCat.includes('supplication') || lowerCat.includes('pray') || lowerCat.includes('ask') || lowerCat.includes('invoke')) {
+              appCategories.push('Dua');
+            } else if (lowerCat.includes('character') || lowerCat.includes('manners') || lowerCat.includes('etiquette') || lowerCat.includes('virtue') || lowerCat.includes('morals') || lowerCat.includes('ethics')) {
+              appCategories.push('Good Character');
+            } else if (lowerCat.includes('repent') || lowerCat.includes('tawbah') || lowerCat.includes('sin') || lowerCat.includes('regret')) {
+              appCategories.push('Repentance');
+            } else if (lowerCat.includes('brother') || lowerCat.includes('unity') || lowerCat.includes('community') || lowerCat.includes('together') || lowerCat.includes('united') || lowerCat.includes('solidarity')) {
+              appCategories.push('Brotherhood');
+            }
+          });
+          
+          // If no categories mapped, add to General
+          if (appCategories.length === 0) {
+            appCategories.push('General');
+          }
+          
+          return {
+            ...hadith,
+            categories: [...new Set(appCategories)] // Remove duplicates
+          };
+        });
         
         setActualHadiths(hadithData);
         setHadiths(categorizedHadiths);
@@ -277,7 +320,7 @@ export default function HadithScreen() {
       }
     };
     
-    loadHadiths();
+    setTimeout(() => { loadHadiths() }, 0);
   }, []);
 
   useEffect(() => {
